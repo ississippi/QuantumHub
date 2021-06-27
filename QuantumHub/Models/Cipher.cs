@@ -7,7 +7,9 @@ namespace QuantumHub.Models
 {
     public class Cipher
     {
+        public int CipherId { get; set; }
         public int UserId { get; set; }
+        public DateTime CreatedDateTime { get; set; }
         public string SerialNumber { get; set; }
         public int StartingPoint { get; set; }
         public string CipherString { get; set; }
@@ -15,7 +17,11 @@ namespace QuantumHub.Models
 
     public class CipherList
     {
-        public List<Cipher> Cipher { get; set; }
+        public CipherList()
+        {
+            Ciphers = new List<Cipher>();
+        }
+        public List<Cipher> Ciphers { get; set; }
     }
 
     public class CipherAcceptDeny

@@ -35,7 +35,11 @@ namespace QuantumHub.Controllers.Tests
         [TestMethod()]
         public void GetCipherListTest()
         {
-            Assert.Fail();
+            var userId = 1;
+            var ctl = new CipherController();
+            var ciphers = ctl.GetCipherList(userId);
+            Assert.IsNotNull(ciphers);
+            Assert.IsTrue(ciphers.Ciphers.Count > 0);
         }
 
         [TestMethod()]

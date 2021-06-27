@@ -12,6 +12,7 @@ namespace QuantumHub.Repository
 {
     public static class CipherRepository
     {
+        static string _connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
 
         #region Public Methods
 
@@ -23,16 +24,16 @@ namespace QuantumHub.Repository
         public static CipherList GetCipherListByUser(int userId)
         {
             CipherList ciphers = null;
-            var connectionString = @"server=localhost:3306;userid=root;password=;database=QuantumEncrypt";
             try
             {
-                using (var dbConn = new MySqlConnection(connectionString))
+                using (var dbConn = new MySqlConnection(_connectionString))
                 {
                     dbConn.Open();
                     using (MySqlCommand dbCmd = dbConn.CreateCommand())
                     {
-                        dbCmd.CommandText = "TTH_ProductGet";
+                        dbCmd.CommandText = "QEH_ciphersget";
                         dbCmd.CommandType = CommandType.StoredProcedure;
+                        dbCmd.Parameters.AddWithValue("userId", userId);
 
                         using (var rdr = dbCmd.ExecuteReader())
                         {
@@ -40,12 +41,14 @@ namespace QuantumHub.Repository
                             while (rdr.Read())
                             {
                                 Cipher cipher = new();
-                                cipher.UserId = DataUtil.NullToZero(rdr["UserId"]);
-                                cipher.SerialNumber = DataUtil.NullToEmpty(rdr["SerialNumber"]);
-                                cipher.StartingPoint = DataUtil.NullToZero(rdr["StartPoint"]);
-                                cipher.CipherString = DataUtil.NullToEmpty(rdr["CipherString"]);
+                                //cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
+                                cipher.UserId = DataUtil.NullToZero(rdr["iduser"]);
+                                cipher.SerialNumber = DataUtil.NullToEmpty(rdr["serialnumber"]);
+                                cipher.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
+                                cipher.CipherString = DataUtil.NullToEmpty(rdr["cipherstring"]);
+                                cipher.CreatedDateTime = DataUtil.NullToDateTimeMinValue(rdr["createdatetime"]);
 
-                                ciphers.Cipher.Add(cipher);
+                                ciphers.Ciphers.Add(cipher);
                             }
                         }
                     }
@@ -60,9 +63,33 @@ namespace QuantumHub.Repository
         }
         public static int SaveCipher(Cipher cipher)
         {
-            var cipherId = -1;
+            try
+            {
+                using (var dbConn = new MySqlConnection(_connectionString))
+                {
+                    dbConn.Open();
+                    using (MySqlCommand dbCmd = dbConn.CreateCommand())
+                    {
+                        dbCmd.CommandText = "QEH_ciphersave";
+                        dbCmd.CommandType = CommandType.StoredProcedure;
+                        dbCmd.Parameters.AddWithValue("UserId", cipher.UserId);
+                        dbCmd.Parameters.AddWithValue("SerialNumber", cipher.SerialNumber);
+                        dbCmd.Parameters.AddWithValue("StartPoint", cipher.StartingPoint);
+                        dbCmd.Parameters.AddWithValue("CipherString", cipher.CipherString);
+                        //SqlParameter newOrderID = dbCmd.Parameters.Add("NewOrderID", SqlDbType.Int);
+                        //newOrderID.Direction = ParameterDirection.Output;
+                        dbCmd.ExecuteNonQuery();
+                        //orderID = Helpers.NullToZero((int)dbCmd.Parameters["NewOrderID"].Value);
+                    }
+                    if (dbConn.State == ConnectionState.Open)
+                        dbConn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            return -1;
 
-            return cipherId;
         }
 
         #endregion Public Methods

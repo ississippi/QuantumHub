@@ -28,7 +28,7 @@ namespace QuantumHub.Controllers
             // 1. Generate Cipher
             var newCipherString = GetRandomCipher(newCipherReq.UserId, newCipherReq.Length);
             // 2. Save to DB
-
+            var cl = CipherRepository.SaveCipher(newCipherString);
             // 3. Return to requestor
             return newCipherString;
         }
