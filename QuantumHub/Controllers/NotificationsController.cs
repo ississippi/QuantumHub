@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using QuantumHub.Models;
+using QuantumHub.Repository;
 
 namespace QuantumHub.Controllers
 {

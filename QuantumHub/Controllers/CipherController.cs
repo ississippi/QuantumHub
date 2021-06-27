@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using QuantumHub.Models;
-using System.Text.RegularExpressions;
+using QuantumHub.Repository;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,6 +28,7 @@ namespace QuantumHub.Controllers
             // 1. Generate Cipher
             var newCipherString = GetRandomCipher(newCipherReq.UserId, newCipherReq.Length);
             // 2. Save to DB
+
             // 3. Return to requestor
             return newCipherString;
         }
@@ -36,8 +38,9 @@ namespace QuantumHub.Controllers
         public CipherList GetCipherList([FromBody] int userId)
         {
             // 1. Get Ciphers from DB for user
+            var cl = CipherRepository.GetCipherListByUser(userId);
             // 2. Return to caller
-            return null;
+            return cl;
         }
 
         // POST api/<CipherController>/GetCipher
