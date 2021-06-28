@@ -13,13 +13,13 @@ namespace QuantumHub.Controllers.Tests
     [TestClass()]
     public class CipherControllerTests
     {
+        int SERIALNO_LEN = 75;
+        int VERSION_LEN = 2;
+        int CIPHER_PREFIX_LEN = 77;
         [TestMethod()]
         public void GetNewCipherTest()
         {
             var requestedLen = 1024;
-            var serialLen = 75;
-            var versionLen = 2;
-            var prefixLen = serialLen + versionLen;
             var cipherReq = new NewCipherRequest
             {
                 UserId = 1,
@@ -29,7 +29,23 @@ namespace QuantumHub.Controllers.Tests
             var cipher = ctl.GetNewCipher(cipherReq);
 
             Assert.IsNotNull(cipher);
-            Assert.IsTrue(cipher.CipherString.Length == requestedLen + prefixLen);
+            Assert.IsTrue(cipher.CipherString.Length == requestedLen + CIPHER_PREFIX_LEN);
+        }
+
+        [TestMethod()]
+        public void GetNewCipher_Small_Test()
+        {
+            var requestedLen = 96;
+            var cipherReq = new NewCipherRequest
+            {
+                UserId = 1,
+                Length = requestedLen
+            };
+            var ctl = new CipherController();
+            var cipher = ctl.GetNewCipher(cipherReq);
+
+            Assert.IsNotNull(cipher);
+            Assert.IsTrue(cipher.CipherString.Length == requestedLen + CIPHER_PREFIX_LEN);
         }
 
         [TestMethod()]
@@ -45,13 +61,44 @@ namespace QuantumHub.Controllers.Tests
         [TestMethod()]
         public void GetCipherTest()
         {
-            Assert.Fail();
+            var request = new CipherRequest
+            {
+                UserId = 1,
+                SerialNumber = "f642bfb037f9bd1227a8fc6435ba211fb922d544cd75f9f72cc8ddf4f77a6d84d1e0bdb7c09"
+            };
+            var ctl = new CipherController();
+            var cipher = ctl.GetCipher(request);
+            Assert.IsNotNull(cipher);
+            Assert.IsTrue(cipher.CipherId > 0);
+            Assert.IsTrue(cipher.CreatedDateTime > DateTime.MinValue);
+            Assert.IsTrue(cipher.StartingPoint > -1);
+            Assert.IsFalse(string.IsNullOrEmpty(cipher.SerialNumber));
+            Assert.IsTrue(cipher.SerialNumber.Length == SERIALNO_LEN);
+            Assert.IsFalse(string.IsNullOrEmpty(cipher.CipherString));
+            Assert.IsTrue(cipher.CipherString.Length > CIPHER_PREFIX_LEN);
         }
 
         [TestMethod()]
-        public void UploadCipherTest()
+        public void SendCipherTest()
         {
-            Assert.Fail();
+            var request = new CipherRequest
+            {
+                UserId = 1,
+                SerialNumber = "34da8aa02a4d1e8cf4495724e1aa5ab05894da2457f35972ba943ce45a68a31b29fad4aff9a"
+            };
+            var ctl = new CipherController();
+            var cipher = ctl.GetCipher(request);
+            var send = new CipherSend
+            {
+                UserId = 1,
+                RecipientUserId = 3,
+                CipherId = 4,
+                StartingPoint = cipher.StartingPoint
+            };
+            var response = ctl.SendCipher(send);
+
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response.status == "success");
         }
 
         [TestMethod()]

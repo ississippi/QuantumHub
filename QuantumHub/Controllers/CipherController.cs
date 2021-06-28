@@ -47,16 +47,29 @@ namespace QuantumHub.Controllers
         [HttpPost]
         public Cipher GetCipher([FromBody] CipherRequest request)
         {
-            // 1. Pull cipher from the DB by Input parameters
-            // 2. Return to Caller
-            return null;
+            // 1. Validate Request
+            if (request == null || request.UserId < 1 || string.IsNullOrEmpty(request.SerialNumber) || request.SerialNumber.Length != 75)
+            {
+                throw new Exception("Bad request");
+            }
+            // 2. Pull cipher from the DB by Input parameters
+            var c = CipherRepository.GetCipher(request.UserId, request.SerialNumber);
+            // 3. Return to Caller
+            return c;
         }
+
         // POST api/<CipherController>/UploadCipher
         [HttpPost]
-        public Response UploadCipher([FromBody] Cipher cipher)
+        public Response SendCipher([FromBody] CipherSend s)
         {
             // 1. Validate Cipher input parameters
-            // 2. Store Cipher into DB
+            if (s == null ||  s.UserId < 1 || s.RecipientUserId < 1 || s.CipherId < 1 || s.StartingPoint < 0)
+            {
+                throw new Exception("Bad Request");
+            }
+            // 2. Save to DB
+            var cl = CipherRepository.SendCipher(s);
+            // 3. Return to requestor
             return new Response { status = "success", reason = "" };
         }
 

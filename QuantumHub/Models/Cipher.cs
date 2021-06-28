@@ -39,4 +39,13 @@ namespace QuantumHub.Models
         public int UserId { get; set; }
         public int Length { get; set; }
     }
+
+    public class CipherSend
+    {
+        public int UserId { get; set; }
+        public int RecipientUserId { get; set; }
+        public int CipherId { get; set; }
+        public int StartingPoint { get; set; }
+
+    }
 }
