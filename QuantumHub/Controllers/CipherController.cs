@@ -6,8 +6,10 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using QuantumHub.Common;
 using QuantumHub.Models;
 using QuantumHub.Repository;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,44 +25,52 @@ namespace QuantumHub.Controllers
 
         // POST api/<CipherController>/GetNewCipher
         [HttpPost]
-        public Cipher GetNewCipher([FromBody] NewCipherRequest newCipherReq)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<Cipher>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetNewCipher([FromBody] NewCipherRequest newCipherReq)
         {
             // 1. Generate Cipher
-            var newCipherString = GetRandomCipher(newCipherReq.UserId, newCipherReq.Length);
+            var newCipher = GetRandomCipher(newCipherReq.UserId, newCipherReq.Length);
             // 2. Save to DB
-            var cl = CipherRepository.SaveCipher(newCipherString);
+            var cl = CipherRepository.SaveCipher(newCipher);
             // 3. Return to requestor
-            return newCipherString;
+            return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = newCipher });
         }
 
         // POST api/<CipherController>/GetCipherList
         [HttpPost]
-        public CipherList GetCipherList([FromBody] int userId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<CipherList>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetCipherList([FromBody] int userId)
         {
             // 1. Get Ciphers from DB for user
             var cl = CipherRepository.GetCipherListByUser(userId);
             // 2. Return to caller
-            return cl;
+            return Ok(new BaseResponse<CipherList> { status = "success", reason = "", Data = cl });
         }
 
         // POST api/<CipherController>/GetCipher
         [HttpPost]
-        public Cipher GetCipher([FromBody] CipherRequest request)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<Cipher>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetCipher([FromBody] CipherRequest request)
         {
             // 1. Validate Request
             if (request == null || request.UserId < 1 || string.IsNullOrEmpty(request.SerialNumber) || request.SerialNumber.Length != 75)
             {
-                throw new Exception("Bad request");
+                return BadRequest(new BaseResponse<Cipher> { status = "fail", reason = "Invalid input UserId or SerialNumber.", Data = null });
             }
             // 2. Pull cipher from the DB by Input parameters
-            var c = CipherRepository.GetCipher(request.UserId, request.SerialNumber);
+            var c = CipherRepository.GetCipher(0, request.UserId, request.SerialNumber);
             // 3. Return to Caller
-            return c;
+            return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = c });
         }
 
         // POST api/<CipherController>/UploadCipher
         [HttpPost]
-        public Response SendCipher([FromBody] CipherSend s)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<Cipher>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult SendCipher([FromBody] CipherSend s)
         {
             // 1. Validate Cipher input parameters
             if (s == null ||  s.UserId < 1 || s.RecipientUserId < 1 || s.CipherId < 1 || s.StartingPoint < 0)
@@ -70,14 +80,32 @@ namespace QuantumHub.Controllers
             // 2. Save to DB
             var cl = CipherRepository.SendCipher(s);
             // 3. Return to requestor
-            return new Response { status = "success", reason = "" };
+            return Ok(new BaseResponse<Cipher> { status = "success", reason = ""});
         }
 
         // POST api/<CipherController>/AcceptDenyCipher
         [HttpPost]
-        public Response AcceptDenyCipher([FromBody] CipherAcceptDeny acceptDeny)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<Cipher>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult AcceptDenyCipher([FromBody] CipherAcceptDeny acceptDeny)
         {
-            return new Response { status = "success", reason = "" };
+            // 1. Validate Input
+            // If Accept, save status and return cipher
+            if (acceptDeny.AcceptDeny.ToLower() == "accept")
+            {
+                //    Save status
+                var cipherId = CipherRepository.SaveSendCipherStatus(acceptDeny);
+                //    Get and return Cipher
+                var c = CipherRepository.GetCipher(cipherId);
+                return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = c});
+            }
+            // If Deny, save response and notify sender.
+            else
+            {
+                //return Ok(new BaseResponse<Cipher> { status = "success", reason = "" });
+
+            }
+            return Ok(new BaseResponse<Cipher> { status = "success", reason = "" });
         }
 
         #endregion Public Methods

@@ -16,7 +16,7 @@ namespace QuantumHub.Repository
 
         #region Public Methods
 
-        public static Cipher GetCipher(int userId, string serialNo)
+        public static Cipher GetCipher(int cipherId = 0, int userId = 0, string serialNo = "")
         {
             Cipher cipher = null;
             try
@@ -101,6 +101,7 @@ namespace QuantumHub.Repository
             {
                 using (var dbConn = new MySqlConnection(_connectionString))
                 {
+                    int cipherId = 0;
                     dbConn.Open();
                     using (MySqlCommand dbCmd = dbConn.CreateCommand())
                     {
@@ -110,10 +111,11 @@ namespace QuantumHub.Repository
                         dbCmd.Parameters.AddWithValue("SerialNumber", cipher.SerialNumber);
                         dbCmd.Parameters.AddWithValue("StartPoint", cipher.StartingPoint);
                         dbCmd.Parameters.AddWithValue("CipherString", cipher.CipherString);
-                        //SqlParameter newOrderID = dbCmd.Parameters.Add("NewOrderID", SqlDbType.Int);
-                        //newOrderID.Direction = ParameterDirection.Output;
+                        MySqlParameter newCipherId = dbCmd.Parameters.Add("cipherId", MySqlDbType.Int32);
+                        newCipherId.Direction = ParameterDirection.Output;
+                        //dbCmd.Parameters.Add(newCipherId);
                         dbCmd.ExecuteNonQuery();
-                        //orderID = Helpers.NullToZero((int)dbCmd.Parameters["NewOrderID"].Value);
+                        cipherId = DataUtil.NullToZero(dbCmd.Parameters["cipherId"].Value);
                     }
                     if (dbConn.State == ConnectionState.Open)
                         dbConn.Close();
@@ -141,6 +143,35 @@ namespace QuantumHub.Repository
                         dbCmd.Parameters.AddWithValue("RecipientUserId", s.RecipientUserId);
                         dbCmd.Parameters.AddWithValue("CipherId", s.CipherId);
                         dbCmd.Parameters.AddWithValue("StartPoint", s.StartingPoint);
+                        //SqlParameter newOrderID = dbCmd.Parameters.Add("NewOrderID", SqlDbType.Int);
+                        //newOrderID.Direction = ParameterDirection.Output;
+                        dbCmd.ExecuteNonQuery();
+                        //orderID = Helpers.NullToZero((int)dbCmd.Parameters["NewOrderID"].Value);
+                    }
+                    if (dbConn.State == ConnectionState.Open)
+                        dbConn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            return -1;
+
+        }
+        //TODO: Needs to return cipher id
+        public static int SaveSendCipherStatus(CipherAcceptDeny a)
+        {
+            try
+            {
+                using (var dbConn = new MySqlConnection(_connectionString))
+                {
+                    dbConn.Open();
+                    using (MySqlCommand dbCmd = dbConn.CreateCommand())
+                    {
+                        dbCmd.CommandText = "QEH_AcceptDenyStatusSave";
+                        dbCmd.CommandType = CommandType.StoredProcedure;
+                        dbCmd.Parameters.AddWithValue("idCipher", a.CipherSendRequestId);
+                        dbCmd.Parameters.AddWithValue("status", a.AcceptDeny);
                         //SqlParameter newOrderID = dbCmd.Parameters.Add("NewOrderID", SqlDbType.Int);
                         //newOrderID.Direction = ParameterDirection.Output;
                         dbCmd.ExecuteNonQuery();

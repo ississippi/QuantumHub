@@ -26,8 +26,8 @@ namespace QuantumHub.Models
 
     public class CipherAcceptDeny
     {
+        public int CipherSendRequestId { get; set; }
         public string AcceptDeny { get; set; }
-        public Cipher Cipher { get; set; }
     }
     public class CipherRequest
     {
