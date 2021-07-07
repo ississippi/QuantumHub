@@ -42,10 +42,23 @@ namespace QuantumHub.Models
 
     public class CipherSend
     {
-        public int UserId { get; set; }
+        public int CipherSendId { get; set; }
+        public int SenderUserId { get; set; }
         public int RecipientUserId { get; set; }
         public int CipherId { get; set; }
         public int StartingPoint { get; set; }
+        public string AcceptDenyStatus { get; set; }
+        public DateTime AcceptDenyStatusDateTime { get; set; }
+        public DateTime CreateDate { get; set; }
 
+    }
+
+    public class CipherSendList
+    {
+        public CipherSendList()
+        {
+            SendRequests = new List<CipherSend>();
+        }
+        public List<CipherSend> SendRequests { get; set; }
     }
 }

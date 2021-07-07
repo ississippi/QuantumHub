@@ -2,10 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using QuantumHub.Common;
 using QuantumHub.Models;
 using QuantumHub.Repository;
+using Microsoft.AspNetCore.Http;
 
 namespace QuantumHub.Controllers
 {
@@ -15,26 +19,30 @@ namespace QuantumHub.Controllers
     public class NotificationsController : ControllerBase
     {
         #region Public Methods
-        // POST api/<CipherController>/GetNewCipher
+        // POST api/<CipherController>/GetNotifications
         [HttpPost]
-        public NotificationList GetNotifications([FromBody] int userId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<CipherSendList>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetNotifications([FromBody] int userId)
         {
-            return null;
+            // 1. Validate Request
+            if (userId < 1)
+            {
+                return BadRequest(new BaseResponse<Cipher> { status = "fail", reason = "Invalid input UserId.", Data = null });
+            }
+            // 2. Pull Notifications from the DB for this user.
+            var c = NotificationsRepository.GetNotifications(userId);
+            // 3. Return to Caller
+            return Ok(new BaseResponse<CipherSendList> { status = "success", reason = "", Data = c });
         }
 
-        // POST api/<CipherController>/GetCipherList
-        [HttpPost]
-        public Response SaveNotificationStatus([FromBody] Notification status)
-        {
-            return new Response { status = "success", reason = "" };
-        }
 
-        // POST api/<CipherController>/GetCipherList
+        // POST api/<CipherController>/WebSocketsNotifications
         [HttpPost]
-        public void LongPollingNotifications([FromBody] int userId)
+        public void WebSocketsNotifications([FromBody] int userId)
         {
         }
 
         #endregion Public Methods
-        }
     }
+}

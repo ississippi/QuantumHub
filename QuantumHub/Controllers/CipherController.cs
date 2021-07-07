@@ -32,7 +32,8 @@ namespace QuantumHub.Controllers
             // 1. Generate Cipher
             var newCipher = GetRandomCipher(newCipherReq.UserId, newCipherReq.Length);
             // 2. Save to DB
-            var cl = CipherRepository.SaveCipher(newCipher);
+            var cid = CipherRepository.SaveCipher(newCipher);
+            newCipher.CipherId = cid;
             // 3. Return to requestor
             return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = newCipher });
         }
@@ -68,19 +69,19 @@ namespace QuantumHub.Controllers
 
         // POST api/<CipherController>/UploadCipher
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<Cipher>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<int>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult SendCipher([FromBody] CipherSend s)
         {
             // 1. Validate Cipher input parameters
-            if (s == null ||  s.UserId < 1 || s.RecipientUserId < 1 || s.CipherId < 1 || s.StartingPoint < 0)
+            if (s == null ||  s.SenderUserId < 1 || s.RecipientUserId < 1 || s.CipherId < 1 || s.StartingPoint < 0)
             {
                 throw new Exception("Bad Request");
             }
             // 2. Save to DB
-            var cl = CipherRepository.SendCipher(s);
+            var cipherSendId = CipherRepository.SendCipher(s);
             // 3. Return to requestor
-            return Ok(new BaseResponse<Cipher> { status = "success", reason = ""});
+            return Ok(new BaseResponse<int> { status = "success", reason = "", Data = cipherSendId});
         }
 
         // POST api/<CipherController>/AcceptDenyCipher
@@ -96,7 +97,7 @@ namespace QuantumHub.Controllers
                 //    Save status
                 var cipherId = CipherRepository.SaveSendCipherStatus(acceptDeny);
                 //    Get and return Cipher
-                var c = CipherRepository.GetCipher(cipherId);
+                var c = CipherRepository.GetCipherFromSend(acceptDeny.CipherSendRequestId);
                 return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = c});
             }
             // If Deny, save response and notify sender.

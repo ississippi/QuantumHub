@@ -1,31 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
 
+using QuantumHub.Common;
 using QuantumHub.Models;
 
 namespace QuantumHub.Repository
 {
     public static class NotificationsRepository
     {
+        static string _connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
+
         #region Public Methods
 
-        public static NotificationList GetNotifications(int userId)
+        public static CipherSendList GetNotifications(int recipientUserId)
         {
+            CipherSendList notifications = null;
+            try
+            {
+                using (var dbConn = new MySqlConnection(_connectionString))
+                {
+                    dbConn.Open();
+                    using (MySqlCommand dbCmd = dbConn.CreateCommand())
+                    {
+                        dbCmd.CommandText = "QEH_CipherSendRequestsGet";
+                        dbCmd.CommandType = CommandType.StoredProcedure;
+                        dbCmd.Parameters.AddWithValue("recipientUserId", recipientUserId);
 
-            return null;
-        }
-        public static int SaveNotification(Notification notif)
-        {
-            var notifId = -1;
+                        using (var rdr = dbCmd.ExecuteReader())
+                        {
+                            notifications = new CipherSendList();
+                            while (rdr.Read())
+                            {
+                                CipherSend n = new();
+                                n.CipherSendId = DataUtil.NullToZero(rdr["idcipher"]);
+                                n.SenderUserId = DataUtil.NullToZero(rdr["idsender"]);
+                                n.RecipientUserId = DataUtil.NullToZero(rdr["idrecipient"]);
+                                n.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
+                                n.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
+                                n.AcceptDenyStatus = DataUtil.NullToEmpty(rdr["acceptdenystatus"]);
 
-            return notifId;
-        }
-        public static bool UpdateNotificationsStatus(NotificationList notifs)
-        {
-
-            return false;
+                                notifications.SendRequests.Add(n);
+                            }
+                        }
+                    }
+                    if (dbConn.State == ConnectionState.Open)
+                        dbConn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+            }
+            return notifications;
         }
 
         #endregion Public Methods
