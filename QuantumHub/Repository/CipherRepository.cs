@@ -113,7 +113,7 @@ namespace QuantumHub.Repository
                         dbCmd.Parameters.AddWithValue("StartPoint", cipher.StartingPoint);
                         dbCmd.Parameters.AddWithValue("CipherString", cipher.CipherString);
                         var newCipherIdObj = dbCmd.ExecuteScalar();
-                        newCipherId = (int)newCipherIdObj;
+                        newCipherId = Convert.ToInt32(newCipherIdObj);
                     }
                     if (dbConn.State == ConnectionState.Open)
                         dbConn.Close();
@@ -143,7 +143,7 @@ namespace QuantumHub.Repository
                         dbCmd.Parameters.AddWithValue("CipherId", s.CipherId);
                         dbCmd.Parameters.AddWithValue("StartPoint", s.StartingPoint);
                         var newCipherSendIdObj = dbCmd.ExecuteScalar();
-                        newCipherSendId = (int)newCipherSendIdObj;
+                        newCipherSendId = Convert.ToInt32(newCipherSendIdObj);
                     }
                     if (dbConn.State == ConnectionState.Open)
                         dbConn.Close();

@@ -23,8 +23,14 @@ namespace QuantumHub.Controllers
 
         #region Public Methods
 
+        [HttpGet]
+        public string Health ()
+        {
+            return "Healthy";
+        }
         // POST api/<CipherController>/GetNewCipher
         [HttpPost]
+        [Route("GetNewCipher")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<Cipher>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetNewCipher([FromBody] NewCipherRequest newCipherReq)
@@ -40,6 +46,7 @@ namespace QuantumHub.Controllers
 
         // POST api/<CipherController>/GetCipherList
         [HttpPost]
+        [Route("GetCipherList")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<CipherList>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetCipherList([FromBody] int userId)
@@ -52,6 +59,7 @@ namespace QuantumHub.Controllers
 
         // POST api/<CipherController>/GetCipher
         [HttpPost]
+        [Route("GetCipher")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<Cipher>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetCipher([FromBody] CipherRequest request)
@@ -69,6 +77,7 @@ namespace QuantumHub.Controllers
 
         // POST api/<CipherController>/UploadCipher
         [HttpPost]
+        [Route("SendCipher")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<int>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult SendCipher([FromBody] CipherSend s)
@@ -86,6 +95,7 @@ namespace QuantumHub.Controllers
 
         // POST api/<CipherController>/AcceptDenyCipher
         [HttpPost]
+        [Route("AcceptDenyCipher")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<Cipher>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult AcceptDenyCipher([FromBody] CipherAcceptDeny acceptDeny)

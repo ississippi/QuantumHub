@@ -21,6 +21,7 @@ namespace QuantumHub.Controllers
         #region Public Methods
         // POST api/<CipherController>/GetNotifications
         [HttpPost]
+        [Route("GetNotifications")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<CipherSendList>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetNotifications([FromBody] int userId)
@@ -38,10 +39,10 @@ namespace QuantumHub.Controllers
 
 
         // POST api/<CipherController>/WebSocketsNotifications
-        [HttpPost]
-        public void WebSocketsNotifications([FromBody] int userId)
-        {
-        }
+        //[HttpPost]
+        //public void WebSocketsNotifications([FromBody] int userId)
+        //{
+        //}
 
         #endregion Public Methods
     }

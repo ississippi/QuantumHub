@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,10 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+using Swashbuckle.AspNetCore;
 
 namespace QuantumHub
 {
@@ -28,6 +30,27 @@ namespace QuantumHub
         {
 
             services.AddControllers();
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1.0", new OpenApiInfo
+            //    {
+            //        Version = "v1.0",
+            //        Title = "QuantumHub",
+            //        Description = "A simple example ASP.NET Core Web API",
+            //        TermsOfService = new Uri("https://quizdeveloper.com/term-and-condition"),
+            //        Contact = new OpenApiContact
+            //        {
+            //            Name = "QuizDev",
+            //            Email = string.Empty,
+            //            Url = new Uri("https://quizdeveloper.com"),
+            //        },
+            //        License = new OpenApiLicense
+            //        {
+            //            Name = "Use license",
+            //            Url = new Uri("https://quizdeveloper.com"),
+            //        }
+            //    });
+            //});
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "QuantumHub", Version = "v1" });
@@ -43,6 +66,14 @@ namespace QuantumHub
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "QuantumHub v1"));
             }
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
 
             app.UseHttpsRedirection();
 
