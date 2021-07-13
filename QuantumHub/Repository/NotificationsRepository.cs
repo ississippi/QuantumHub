@@ -36,7 +36,7 @@ namespace QuantumHub.Repository
                             while (rdr.Read())
                             {
                                 CipherSend n = new();
-                                n.CipherSendId = DataUtil.NullToZero(rdr["idcipher"]);
+                                n.CipherSendId = DataUtil.NullToZero(rdr["idcipher_send"]);
                                 n.SenderUserId = DataUtil.NullToZero(rdr["idsender"]);
                                 n.RecipientUserId = DataUtil.NullToZero(rdr["idrecipient"]);
                                 n.CipherId = DataUtil.NullToZero(rdr["idcipher"]);

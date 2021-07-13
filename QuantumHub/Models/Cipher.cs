@@ -32,7 +32,7 @@ namespace QuantumHub.Models
     public class CipherRequest
     {
         public int UserId { get; set; }
-        public string SerialNumber { get; set; }
+        public int CipherId { get; set; }
     }
     public class NewCipherRequest
     {

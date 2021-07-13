@@ -84,7 +84,8 @@ namespace QuantumHub.Controllers.Tests
             var request = new CipherRequest
             {
                 UserId = 1,
-                SerialNumber = "f642bfb037f9bd1227a8fc6435ba211fb922d544cd75f9f72cc8ddf4f77a6d84d1e0bdb7c09"
+                //SerialNumber = "f642bfb037f9bd1227a8fc6435ba211fb922d544cd75f9f72cc8ddf4f77a6d84d1e0bdb7c09"
+                CipherId = 3
             };
             var ctl = new CipherController();
             var response = ctl.GetCipher(request);
@@ -111,7 +112,8 @@ namespace QuantumHub.Controllers.Tests
             var request = new CipherRequest
             {
                 UserId = 1,
-                SerialNumber = "34da8aa02a4d1e8cf4495724e1aa5ab05894da2457f35972ba943ce45a68a31b29fad4aff9a"
+                //SerialNumber = "34da8aa02a4d1e8cf4495724e1aa5ab05894da2457f35972ba943ce45a68a31b29fad4aff9a"
+                CipherId = 4
             };
             var ctl = new CipherController();
             var cipherResponse = ctl.GetCipher(request);

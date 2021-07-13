@@ -16,7 +16,7 @@ namespace QuantumHub.Repository
 
         #region Public Methods
 
-        public static Cipher GetCipher(int cipherId = 0, int userId = 0, string serialNo = "")
+        public static Cipher GetCipher(int userId = 0, int cipherId = 0)
         {
             Cipher cipher = null;
             try
@@ -29,15 +29,14 @@ namespace QuantumHub.Repository
                         dbCmd.CommandText = "QEH_cipherget";
                         dbCmd.CommandType = CommandType.StoredProcedure;
                         dbCmd.Parameters.AddWithValue("userId", userId);
-                        dbCmd.Parameters.AddWithValue("serialNo", serialNo);
+                        dbCmd.Parameters.AddWithValue("cipherId", cipherId);
 
                         using (var rdr = dbCmd.ExecuteReader())
                         {
                             if (rdr.Read())
                             {
                                 cipher = new();
-                                //cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
-                                cipher.CipherId = 3; //TODO: Remove this hard-code
+                                cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
                                 cipher.UserId = DataUtil.NullToZero(rdr["iduser"]);
                                 cipher.SerialNumber = DataUtil.NullToEmpty(rdr["serialnumber"]);
                                 cipher.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);

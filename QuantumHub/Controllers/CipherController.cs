@@ -65,12 +65,12 @@ namespace QuantumHub.Controllers
         public IActionResult GetCipher([FromBody] CipherRequest request)
         {
             // 1. Validate Request
-            if (request == null || request.UserId < 1 || string.IsNullOrEmpty(request.SerialNumber) || request.SerialNumber.Length != 75)
+            if (request == null || request.UserId < 1 || request.CipherId < 1)
             {
                 return BadRequest(new BaseResponse<Cipher> { status = "fail", reason = "Invalid input UserId or SerialNumber.", Data = null });
             }
             // 2. Pull cipher from the DB by Input parameters
-            var c = CipherRepository.GetCipher(0, request.UserId, request.SerialNumber);
+            var c = CipherRepository.GetCipher(request.UserId, request.CipherId);
             // 3. Return to Caller
             return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = c });
         }
@@ -102,7 +102,7 @@ namespace QuantumHub.Controllers
         {
             // 1. Validate Input
             // If Accept, save status and return cipher
-            if (acceptDeny.AcceptDeny.ToLower() == "accept")
+            if (acceptDeny.AcceptDeny.ToLower() == "accepted")
             {
                 //    Save status
                 var cipherId = CipherRepository.SaveSendCipherStatus(acceptDeny);
