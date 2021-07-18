@@ -42,6 +42,7 @@ namespace QuantumHub.Repository
                                 n.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
                                 n.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
                                 n.AcceptDenyStatus = DataUtil.NullToEmpty(rdr["acceptdenystatus"]);
+                                n.CreateDate = DataUtil.NullToDateTimeMinValue(rdr["createdate"]);
 
                                 notifications.SendRequests.Add(n);
                             }

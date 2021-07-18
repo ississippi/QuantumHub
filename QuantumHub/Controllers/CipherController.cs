@@ -102,18 +102,23 @@ namespace QuantumHub.Controllers
         {
             // 1. Validate Input
             // If Accept, save status and return cipher
-            if (acceptDeny.AcceptDeny.ToLower() == "accepted")
+            if (acceptDeny.AcceptDeny.ToLower() == "accept")
             {
-                //    Save status
+                // 1. Save status
                 var cipherId = CipherRepository.SaveSendCipherStatus(acceptDeny);
-                //    Get and return Cipher
+                // 2. Get Cipher
                 var c = CipherRepository.GetCipherFromSend(acceptDeny.CipherSendRequestId);
+                c.UserId = acceptDeny.UserId;
+                // 2. Save to DB
+                var cid = CipherRepository.SaveCipher(c);
+
                 return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = c});
             }
             // If Deny, save response and notify sender.
             else
             {
-                //return Ok(new BaseResponse<Cipher> { status = "success", reason = "" });
+                // 1. Save status and all done.
+                var cipherId = CipherRepository.SaveSendCipherStatus(acceptDeny);
 
             }
             return Ok(new BaseResponse<Cipher> { status = "success", reason = "" });
