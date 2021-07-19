@@ -130,6 +130,7 @@ namespace QuantumHub.Repository
             var newCipherSendId = 0;
             try
             {
+
                 using (var dbConn = new MySqlConnection(_connectionString))
                 {
                     dbConn.Open();
