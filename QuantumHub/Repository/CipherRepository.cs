@@ -12,8 +12,8 @@ namespace QuantumHub.Repository
 {
     public static class CipherRepository
     {
-        static string _connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
-
+        //static string _connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
+        static string _connectionString = @"Database = quantumencrypt;Data Source = 127.0.0.1; User Id = azure; Password=6#vWHD_$";
         #region Public Methods
 
         public static Cipher GetCipher(int userId = 0, int cipherId = 0)
