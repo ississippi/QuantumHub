@@ -13,7 +13,7 @@ namespace QuantumHub.Repository
     public static class CipherRepository
     {
         //static string _connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
-        static string _connectionString = @"Database = quantumencrypt;Data Source = 127.0.0.1; User Id = azure; Password=6#vWHD_$";
+        static string _connectionString = @"server=127.0.0.1;port=54794;database=quantumencrypt;user=azure;password=6#vWHD_$;";
         #region Public Methods
 
         public static Cipher GetCipher(int userId = 0, int cipherId = 0)
@@ -21,7 +21,7 @@ namespace QuantumHub.Repository
             Cipher cipher = null;
             try
             {
-                using (var dbConn = new MySqlConnection(_connectionString))
+                using (var dbConn = new MySqlConnection(getConnectionString()))
                 {
                     dbConn.Open();
                     using (MySqlCommand dbCmd = dbConn.CreateCommand())
@@ -57,8 +57,7 @@ namespace QuantumHub.Repository
         public static CipherList GetCipherListByUser(int userId)
         {
             CipherList ciphers = null;
-            //using (var dbConn = new MySqlConnection(_connectionString))
-            using (var dbConn = new MySqlConnection("server=127.0.0.1;port=54794;database=quantumencrypt;user=azure;password=6#vWHD_$;"))
+            using (var dbConn = new MySqlConnection(getConnectionString()))
             {
                 dbConn.Open();
                 using (MySqlCommand dbCmd = dbConn.CreateCommand())
@@ -95,7 +94,7 @@ namespace QuantumHub.Repository
             var newCipherId = 0;
             try
             {
-                using (var dbConn = new MySqlConnection(_connectionString))
+                using (var dbConn = new MySqlConnection(getConnectionString()))
                 {
                     int cipherId = 0;
                     dbConn.Open();
@@ -127,7 +126,7 @@ namespace QuantumHub.Repository
             try
             {
 
-                using (var dbConn = new MySqlConnection(_connectionString))
+                using (var dbConn = new MySqlConnection(getConnectionString()))
                 {
                     dbConn.Open();
                     using (MySqlCommand dbCmd = dbConn.CreateCommand())
@@ -157,7 +156,7 @@ namespace QuantumHub.Repository
             Cipher cipher = null;
             try
             {
-                using (var dbConn = new MySqlConnection(_connectionString))
+                using (var dbConn = new MySqlConnection(getConnectionString()))
                 {
                     dbConn.Open();
                     using (MySqlCommand dbCmd = dbConn.CreateCommand())
@@ -195,7 +194,7 @@ namespace QuantumHub.Repository
         {
             try
             {
-                using (var dbConn = new MySqlConnection(_connectionString))
+                using (var dbConn = new MySqlConnection(getConnectionString()))
                 {
                     dbConn.Open();
                     using (MySqlCommand dbCmd = dbConn.CreateCommand())
@@ -228,7 +227,7 @@ namespace QuantumHub.Repository
 //#if DEBUG
 //            string connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
 //#else
-        string connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb");
+            string connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb");
 //#endif
             string[] options = connectionString.Split(";");
             string database = options[0].Split("=")[1]; ;
