@@ -54,10 +54,16 @@ namespace QuantumHub.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetCipherList([FromBody] int userId)
         {
-            // 1. Get Ciphers from DB for user
-            var cl = CipherRepository.GetCipherListByUser(userId);
-            // 2. Return to caller
-            return Ok(new BaseResponse<CipherList> { status = "success", reason = "", Data = cl });
+            try {
+                // 1. Get Ciphers from DB for user
+                var cl = CipherRepository.GetCipherListByUser(userId);
+                // 2. Return to caller
+                return Ok(new BaseResponse<CipherList> { status = "success", reason = "", Data = cl });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
 
         // POST api/<CipherController>/GetCipher
