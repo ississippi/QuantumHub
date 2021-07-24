@@ -51,7 +51,8 @@ namespace QuantumHub.Controllers
         [HttpPost]
         [Route("GetCipherList")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<CipherList>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponse<string>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(BaseResponse<string>))]
         public IActionResult GetCipherList([FromBody] int userId)
         {
             try {
@@ -62,7 +63,7 @@ namespace QuantumHub.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(e);
+                return BadRequest(new BaseResponse<string> { status = "fail", reason = e.Message, Data = e.StackTrace });
             }
         }
 
