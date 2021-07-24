@@ -227,7 +227,7 @@ namespace QuantumHub.Repository
 //#if DEBUG
 //            string connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
 //#else
-            string connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb");
+            string connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_quantumencrypt");
 //#endif
             string[] options = connectionString.Split(";");
             string database = options[0].Split("=")[1]; ;
