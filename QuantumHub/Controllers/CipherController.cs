@@ -145,7 +145,7 @@ namespace QuantumHub.Controllers
 
         private static string GenerateRandomCryptographicKey(int keyLength)
         {
-            RNGCryptoServiceProvider rngCryptoServiceProvider = new();
+            RNGCryptoServiceProvider rngCryptoServiceProvider = new RNGCryptoServiceProvider();
             byte[] randomBytes = new byte[keyLength];
             rngCryptoServiceProvider.GetBytes(randomBytes);
             return Convert.ToBase64String(randomBytes).Substring(0, keyLength);

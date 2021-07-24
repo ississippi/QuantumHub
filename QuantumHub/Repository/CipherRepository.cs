@@ -35,7 +35,7 @@ namespace QuantumHub.Repository
                         {
                             if (rdr.Read())
                             {
-                                cipher = new();
+                                cipher = new Cipher();
                                 cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
                                 cipher.UserId = DataUtil.NullToZero(rdr["iduser"]);
                                 cipher.SerialNumber = DataUtil.NullToEmpty(rdr["serialnumber"]);
@@ -73,7 +73,7 @@ namespace QuantumHub.Repository
                             ciphers = new CipherList();
                             while (rdr.Read())
                             {
-                                Cipher cipher = new();
+                                Cipher cipher = new Cipher();
                                 //cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
                                 cipher.UserId = DataUtil.NullToZero(rdr["iduser"]);
                                 cipher.SerialNumber = DataUtil.NullToEmpty(rdr["serialnumber"]);
@@ -174,7 +174,7 @@ namespace QuantumHub.Repository
                         {
                             if (rdr.Read())
                             {
-                                cipher = new();
+                                cipher = new Cipher();
                                 //cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
                                 cipher.CipherId = 3; //TODO: Remove this hard-code
                                 cipher.UserId = DataUtil.NullToZero(rdr["iduser"]);

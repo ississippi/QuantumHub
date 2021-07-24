@@ -35,7 +35,7 @@ namespace QuantumHub.Repository
                             notifications = new CipherSendList();
                             while (rdr.Read())
                             {
-                                CipherSend n = new();
+                                CipherSend n = new CipherSend();
                                 n.CipherSendId = DataUtil.NullToZero(rdr["idcipher_send"]);
                                 n.SenderUserId = DataUtil.NullToZero(rdr["idsender"]);
                                 n.RecipientUserId = DataUtil.NullToZero(rdr["idrecipient"]);
