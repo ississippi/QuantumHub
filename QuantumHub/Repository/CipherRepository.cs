@@ -58,7 +58,7 @@ namespace QuantumHub.Repository
         {
             CipherList ciphers = null;
             //using (var dbConn = new MySqlConnection(_connectionString))
-            using (var dbConn = new MySqlConnection(getConnectionString()))
+            using (var dbConn = new MySqlConnection("server=127.0.0.1;port=54794;database=quantumencrypt;user=azure;password=6#vWHD_$;"))
             {
                 dbConn.Open();
                 using (MySqlCommand dbCmd = dbConn.CreateCommand())
