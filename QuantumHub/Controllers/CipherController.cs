@@ -63,7 +63,7 @@ namespace QuantumHub.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(new BaseResponse<string> { status = "fail", reason = e.Message, Data = e.StackTrace });
+                return BadRequest(new BaseResponse<string> { status = "fail", reason = e.Message, Data = e.StackTrace + " connectionString: " + CipherRepository.getConnectionString() });
             }
         }
 

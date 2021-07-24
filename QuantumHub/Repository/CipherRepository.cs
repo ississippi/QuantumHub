@@ -57,7 +57,8 @@ namespace QuantumHub.Repository
         public static CipherList GetCipherListByUser(int userId)
         {
             CipherList ciphers = null;
-            using (var dbConn = new MySqlConnection(_connectionString))
+            //using (var dbConn = new MySqlConnection(_connectionString))
+            using (var dbConn = new MySqlConnection(getConnectionString()))
             {
                 dbConn.Open();
                 using (MySqlCommand dbCmd = dbConn.CreateCommand())
@@ -222,6 +223,25 @@ namespace QuantumHub.Repository
 
         #region Private Functions
 
+        public static string getConnectionString()
+        {
+//#if DEBUG
+//            string connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
+//#else
+        string connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb");
+//#endif
+            string[] options = connectionString.Split(";");
+            string database = options[0].Split("=")[1]; ;
+            string serverport = options[1].Split("=")[1];
+            string server = serverport.Split(":")[0];
+            string port = serverport.Split(":")[1];
+            string user = options[2].Split("=")[1];
+            string password = options[3].Split("=")[1]; ;
+
+            connectionString = $"server={server};port={port};database={database};user={user};password={password};";
+
+            return connectionString;
+        }
 
         #endregion Private Functions
     }
