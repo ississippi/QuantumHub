@@ -19,6 +19,14 @@ namespace QuantumHub.Controllers
     public class NotificationsController : ControllerBase
     {
         #region Public Methods
+        [HttpGet]
+        [Route("Health")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public void Health()
+        {
+        }
+        
         // POST api/<CipherController>/GetNotifications
         [HttpPost]
         [Route("GetNotifications")]

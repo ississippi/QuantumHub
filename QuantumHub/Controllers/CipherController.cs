@@ -24,10 +24,13 @@ namespace QuantumHub.Controllers
         #region Public Methods
 
         [HttpGet]
-        public string Health ()
+        [Route("Health")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public void Health ()
         {
-            return "Healthy";
         }
+
         // POST api/<CipherController>/GetNewCipher
         [HttpPost]
         [Route("GetNewCipher")]
