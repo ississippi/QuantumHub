@@ -31,19 +31,29 @@ namespace QuantumHub.Controllers
         [HttpPost]
         [Route("GetNotifications")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<CipherSendList>))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponse<string>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(BaseResponse<string>))]
         public IActionResult GetNotifications([FromBody] NotificationRequest request)
         {
-            // 1. Validate Request
-            if (request.RecipientId < 1)
+            try
             {
-                return BadRequest(new BaseResponse<Cipher> { status = "fail", reason = "Invalid input UserId.", Data = null });
+                // 1. Validate Request
+                if (request.RecipientId < 1)
+                {
+                    return BadRequest(new BaseResponse<Cipher> { status = "fail", reason = "Invalid input UserId.", Data = null });
+                }
+                // 2. Pull Notifications from the DB for this user.
+                var c = NotificationsRepository.GetNotifications(request);
+                var nl = NotificationsRepository.AddMaxEncryptLengthToNotifications(ref c);
+                // 3. Return to Caller
+                return Ok(new BaseResponse<CipherSendList> { status = "success", reason = "", Data = nl });
             }
-            // 2. Pull Notifications from the DB for this user.
-            var c = NotificationsRepository.GetNotifications(request);
-            var nl = NotificationsRepository.AddMaxEncryptLengthToNotifications(ref c);
-            // 3. Return to Caller
-            return Ok(new BaseResponse<CipherSendList> { status = "success", reason = "", Data = nl });
+            catch(Exception e)
+            {
+                return BadRequest(new BaseResponse<string> { status = "fail", reason = e.Message, Data = e.StackTrace + " connectionString: " + CipherRepository.getConnectionString() });
+            }
+
+
         }
 
 

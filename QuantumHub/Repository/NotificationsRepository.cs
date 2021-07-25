@@ -20,45 +20,40 @@ namespace QuantumHub.Repository
         public static CipherSendList GetNotifications(NotificationRequest request)
         {
             CipherSendList notifications = null;
-            try
+
+            request.Status = request.Status.ToLower();
+            if (request.Status != "accept" && request.Status != "deny" && request.Status != "pending")
+                throw new Exception($"Invalid status: {request.Status}.");
+            using (var dbConn = new MySqlConnection(_connectionString))
             {
-                request.Status = request.Status.ToLower();
-                if (request.Status != "accept" && request.Status != "deny" && request.Status != "pending")
-                    throw new Exception($"Invalid status: {request.Status}.");
-                using (var dbConn = new MySqlConnection(ConnectionString.getConnectionString()))
+                dbConn.Open();
+                using (MySqlCommand dbCmd = dbConn.CreateCommand())
                 {
-                    dbConn.Open();
-                    using (MySqlCommand dbCmd = dbConn.CreateCommand())
+                    dbCmd.CommandText = "QEH_CipherSendRequestsGet";
+                    dbCmd.CommandType = CommandType.StoredProcedure;
+                    dbCmd.Parameters.AddWithValue("recipientUserId", request.RecipientId);
+                    dbCmd.Parameters.AddWithValue("statusRequested", request.Status);
+
+                    using (var rdr = dbCmd.ExecuteReader())
                     {
-                        dbCmd.CommandText = "QEH_CipherSendRequestsGet";
-                        dbCmd.CommandType = CommandType.StoredProcedure;
-                        dbCmd.Parameters.AddWithValue("recipientUserId", request.RecipientId);
-                        dbCmd.Parameters.AddWithValue("statusRequested", request.Status);
-
-                        using (var rdr = dbCmd.ExecuteReader())
+                        notifications = new CipherSendList();
+                        while (rdr.Read())
                         {
-                            notifications = new CipherSendList();
-                            while (rdr.Read())
-                            {
-                                CipherSend n = new CipherSend();
-                                n.CipherSendId = DataUtil.NullToZero(rdr["idcipher_send"]);
-                                n.SenderUserId = DataUtil.NullToZero(rdr["idsender"]);
-                                n.RecipientUserId = DataUtil.NullToZero(rdr["idrecipient"]);
-                                n.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
-                                n.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
-                                n.AcceptDenyStatus = DataUtil.NullToEmpty(rdr["acceptdenystatus"]);
-                                n.CreateDate = DataUtil.NullToDateTimeMinValue(rdr["createdate"]);
+                            CipherSend n = new CipherSend();
+                            n.CipherSendId = DataUtil.NullToZero(rdr["idcipher_send"]);
+                            n.SenderUserId = DataUtil.NullToZero(rdr["idsender"]);
+                            n.RecipientUserId = DataUtil.NullToZero(rdr["idrecipient"]);
+                            n.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
+                            n.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
+                            n.AcceptDenyStatus = DataUtil.NullToEmpty(rdr["acceptdenystatus"]);
+                            n.CreateDate = DataUtil.NullToDateTimeMinValue(rdr["createdate"]);
 
-                                notifications.SendRequests.Add(n);
-                            }
+                            notifications.SendRequests.Add(n);
                         }
                     }
-                    if (dbConn.State == ConnectionState.Open)
-                        dbConn.Close();
                 }
-            }
-            catch (Exception e)
-            {
+                if (dbConn.State == ConnectionState.Open)
+                    dbConn.Close();
             }
             return notifications;
         }
