@@ -180,6 +180,7 @@ namespace QuantumHub.Repository
                                 cipher.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
                                 cipher.CipherString = DataUtil.NullToEmpty(rdr["cipherstring"]);
                                 cipher.CreatedDateTime = DataUtil.NullToDateTimeMinValue(rdr["createdatetime"]);
+                                cipher.MaxEncryptionLength = DataUtil.NullToZero(rdr["maxencryptionlength"]);
                             }
                         }
                     }
