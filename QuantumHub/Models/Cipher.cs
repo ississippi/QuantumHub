@@ -13,6 +13,8 @@ namespace QuantumHub.Models
         public string SerialNumber { get; set; }
         public int StartingPoint { get; set; }
         public string CipherString { get; set; }
+        public int MaxEncryptionLength { get; set; }
+
     }
 
     public class CipherList
@@ -51,7 +53,7 @@ namespace QuantumHub.Models
         public string AcceptDenyStatus { get; set; }
         public DateTime AcceptDenyStatusDateTime { get; set; }
         public DateTime CreateDate { get; set; }
-
+        public int MaxEncryptionLength { get; set; }
     }
 
     public class CipherSendList

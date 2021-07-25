@@ -32,17 +32,18 @@ namespace QuantumHub.Controllers
         [Route("GetNotifications")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<CipherSendList>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetNotifications([FromBody] int userId)
+        public IActionResult GetNotifications([FromBody] NotificationRequest request)
         {
             // 1. Validate Request
-            if (userId < 1)
+            if (request.RecipientId < 1)
             {
                 return BadRequest(new BaseResponse<Cipher> { status = "fail", reason = "Invalid input UserId.", Data = null });
             }
             // 2. Pull Notifications from the DB for this user.
-            var c = NotificationsRepository.GetNotifications(userId);
+            var c = NotificationsRepository.GetNotifications(request);
+            var nl = NotificationsRepository.AddMaxEncryptLengthToNotifications(ref c);
             // 3. Return to Caller
-            return Ok(new BaseResponse<CipherSendList> { status = "success", reason = "", Data = c });
+            return Ok(new BaseResponse<CipherSendList> { status = "success", reason = "", Data = nl });
         }
 
 

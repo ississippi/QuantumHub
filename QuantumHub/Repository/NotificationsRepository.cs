@@ -17,19 +17,23 @@ namespace QuantumHub.Repository
 
         #region Public Methods
 
-        public static CipherSendList GetNotifications(int recipientUserId)
+        public static CipherSendList GetNotifications(NotificationRequest request)
         {
             CipherSendList notifications = null;
             try
             {
-                using (var dbConn = new MySqlConnection(_connectionString))
+                request.Status = request.Status.ToLower();
+                if (request.Status != "accept" && request.Status != "deny" && request.Status != "pending")
+                    throw new Exception($"Invalid status: {request.Status}.");
+                using (var dbConn = new MySqlConnection(ConnectionString.getConnectionString()))
                 {
                     dbConn.Open();
                     using (MySqlCommand dbCmd = dbConn.CreateCommand())
                     {
                         dbCmd.CommandText = "QEH_CipherSendRequestsGet";
                         dbCmd.CommandType = CommandType.StoredProcedure;
-                        dbCmd.Parameters.AddWithValue("recipientUserId", recipientUserId);
+                        dbCmd.Parameters.AddWithValue("recipientUserId", request.RecipientId);
+                        dbCmd.Parameters.AddWithValue("statusRequested", request.Status);
 
                         using (var rdr = dbCmd.ExecuteReader())
                         {
@@ -57,6 +61,20 @@ namespace QuantumHub.Repository
             {
             }
             return notifications;
+        }
+
+        public static CipherSendList AddMaxEncryptLengthToNotifications(ref CipherSendList s)
+        {
+
+            foreach (var sendReq in s.SendRequests)
+            {
+                var c = CipherRepository.GetCipher(sendReq.SenderUserId, sendReq.CipherId);
+                if (c == null)
+                    continue;
+                sendReq.MaxEncryptionLength = c.MaxEncryptionLength;
+            }
+
+            return s;
         }
 
         #endregion Public Methods

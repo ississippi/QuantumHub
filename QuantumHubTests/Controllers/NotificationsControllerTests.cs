@@ -21,7 +21,12 @@ namespace QuantumHub.Controllers.Tests
         {
             var recipientUserId = 3;
             var ctl = new NotificationsController();
-            var response = ctl.GetNotifications(recipientUserId);
+            var request = new NotificationRequest()
+            {
+                Status = "pending",
+                RecipientId = recipientUserId
+            };
+            var response = ctl.GetNotifications(request);
 
             Assert.IsNotNull(response);
             var okResult = response as OkObjectResult;
@@ -32,10 +37,10 @@ namespace QuantumHub.Controllers.Tests
             Assert.IsTrue(n.SendRequests.Count > 0);
         }
 
-        [TestMethod()]
-        public void NotificationsWebSocketsTest()
-        {
-            Assert.Fail();
-        }
+        //[TestMethod()]
+        //public void NotificationsWebSocketsTest()
+        //{
+        //    Assert.Fail();
+        //}
     }
 }

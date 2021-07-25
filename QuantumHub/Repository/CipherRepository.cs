@@ -42,6 +42,7 @@ namespace QuantumHub.Repository
                                 cipher.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
                                 cipher.CipherString = DataUtil.NullToEmpty(rdr["cipherstring"]);
                                 cipher.CreatedDateTime = DataUtil.NullToDateTimeMinValue(rdr["createdatetime"]);
+                                cipher.MaxEncryptionLength = DataUtil.NullToZero(rdr["maxencryptionlength"]);
                             }
                         }
                     }
@@ -72,12 +73,13 @@ namespace QuantumHub.Repository
                         while (rdr.Read())
                         {
                             Cipher cipher = new Cipher();
-                            //cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
+                            cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
                             cipher.UserId = DataUtil.NullToZero(rdr["iduser"]);
                             cipher.SerialNumber = DataUtil.NullToEmpty(rdr["serialnumber"]);
                             cipher.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
                             cipher.CipherString = DataUtil.NullToEmpty(rdr["cipherstring"]);
                             cipher.CreatedDateTime = DataUtil.NullToDateTimeMinValue(rdr["createdatetime"]);
+                            cipher.MaxEncryptionLength = DataUtil.NullToZero(rdr["maxencryptionlength"]);
 
                             ciphers.Ciphers.Add(cipher);
                         }
@@ -106,6 +108,7 @@ namespace QuantumHub.Repository
                         dbCmd.Parameters.AddWithValue("SerialNumber", cipher.SerialNumber);
                         dbCmd.Parameters.AddWithValue("StartPoint", cipher.StartingPoint);
                         dbCmd.Parameters.AddWithValue("CipherString", cipher.CipherString);
+                        dbCmd.Parameters.AddWithValue("MaxEncryptionLength", cipher.MaxEncryptionLength);
                         var newCipherIdObj = dbCmd.ExecuteScalar();
                         newCipherId = Convert.ToInt32(newCipherIdObj);
                     }
@@ -123,9 +126,9 @@ namespace QuantumHub.Repository
         public static int SendCipher(CipherSend s)
         {
             var newCipherSendId = 0;
+            var maxEncryptLength = 0;
             try
             {
-
                 using (var dbConn = new MySqlConnection(_connectionString))
                 {
                     dbConn.Open();
@@ -202,7 +205,7 @@ namespace QuantumHub.Repository
                         dbCmd.CommandText = "QEH_AcceptDenyStatusSave";
                         dbCmd.CommandType = CommandType.StoredProcedure;
                         dbCmd.Parameters.AddWithValue("idCipher", a.CipherSendRequestId);
-                        dbCmd.Parameters.AddWithValue("status", a.AcceptDeny);
+                        dbCmd.Parameters.AddWithValue("status", a.AcceptDeny.ToLower());
                         //SqlParameter newOrderID = dbCmd.Parameters.Add("NewOrderID", SqlDbType.Int);
                         //newOrderID.Direction = ParameterDirection.Output;
                         dbCmd.ExecuteNonQuery();
@@ -224,11 +227,11 @@ namespace QuantumHub.Repository
 
         public static string getConnectionString()
         {
-//#if DEBUG
-//            string connectionString = @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
-//#else
+#if DEBUG
+            return @"server=localhost;userid=root;password=Siberia$111;database=quantumencrypt";
+#else
             string connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb");
-//#endif
+
             string[] options = connectionString.Split(";");
             string database = options[0].Split("=")[1]; ;
             string serverport = options[1].Split("=")[1];
@@ -240,6 +243,7 @@ namespace QuantumHub.Repository
             connectionString = $"server={server};port={port};database={database};user={user};password={password};";
 
             return connectionString;
+#endif
         }
 
         #endregion Private Functions

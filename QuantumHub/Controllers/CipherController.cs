@@ -143,9 +143,11 @@ namespace QuantumHub.Controllers
             var version = "01";
             var serialNo = GenerateRandomSerialNumber();
             var newCipher = GenerateRandomCryptographicKey(cipherLen);
+            var maxEncrypt = QuantumEncrypt.GetMaxFileSizeForEncryption(newCipher);
             var cipher = new Cipher
             {
                 CipherString = version + serialNo + newCipher,
+                MaxEncryptionLength = maxEncrypt,
                 SerialNumber = serialNo,
                 StartingPoint = 0,
                 UserId = userId
