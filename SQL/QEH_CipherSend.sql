@@ -1,9 +1,5 @@
-USE `quantumencrypt`;
-DROP procedure IF EXISTS `QEH_CipherSend`;
-
 DELIMITER $$
-USE `quantumencrypt`$$
-CREATE PROCEDURE `QEH_CipherSend` (
+CREATE DEFINER=`root`@`localhost` PROCEDURE `QEH_CipherSend`(
 	IN userId INT
 	,IN recipientUserId INT
     ,IN cipherId INT
@@ -12,6 +8,7 @@ CREATE PROCEDURE `QEH_CipherSend` (
 BEGIN
 	INSERT INTO cipher_send
 		(idsender
+        ,acceptdenystatus
 		,idrecipient
 		,idcipher
 		,startpoint
@@ -19,12 +16,12 @@ BEGIN
         )
 	VALUES
 		(userId
+        ,'pending'
         ,recipientUserId
         ,cipherId
         ,startpoint
         ,Now()
         );
+	SELECT last_insert_id() AS id_ciphersend;
 END$$
-
 DELIMITER ;
-

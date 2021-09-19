@@ -1,7 +1,7 @@
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `QEH_CipherGet`(
 	IN userId INT,
-    IN serialNo VARCHAR(75)
+    IN cipherId INT
     )
 BEGIN
 	SELECT	c.idcipher
@@ -10,9 +10,9 @@ BEGIN
 			,c.serialnumber
 			,c.startpoint
 			,c.cipherstring
+            ,c.maxencryptionlength
 	FROM cipher c
     WHERE c.iduser = userId
-    AND c.serialnumber = serialNo;
+    AND c.idcipher = cipherId;
 END$$
 DELIMITER ;
-SELECT * FROM quantumencrypt.cipher_send;

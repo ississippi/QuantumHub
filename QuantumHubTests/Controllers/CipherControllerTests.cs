@@ -159,5 +159,26 @@ namespace QuantumHub.Controllers.Tests
             Assert.IsNotNull(c);
             Assert.IsTrue(c.CipherString.Length > CIPHER_PREFIX_LEN);
         }
+
+        [TestMethod()]
+        public void GetNewCipherSerialsForUserTest()
+        {
+            var csr = new CipherSerialRequest
+            {
+                UserId = 3,
+                Quantity = 25
+            };
+            var ctl = new CipherController();
+            var response = ctl.GetNewCipherSerialsForUser(csr);
+
+            Assert.IsNotNull(response);
+            var okResult = response as OkObjectResult;
+            Assert.IsNotNull(okResult.Value);
+            var br = (BaseResponse<CipherSerials>)okResult.Value;
+            var c = br.Data;
+            Assert.IsNotNull(c);
+            Assert.IsNotNull(c.SerialNumbers);
+            Assert.IsTrue(c.SerialNumbers.Count == csr.Quantity);
+        }
     }
 }

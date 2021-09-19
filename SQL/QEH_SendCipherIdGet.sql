@@ -10,6 +10,7 @@ SELECT	c.idcipher
 			,c.serialnumber
 			,c.startpoint
 			,c.cipherstring
+            ,c.maxencryptionlength
 	FROM cipher c
     JOIN cipher_send s ON s.idcipher = c.idcipher
     WHERE s.idcipher_send = sendId;

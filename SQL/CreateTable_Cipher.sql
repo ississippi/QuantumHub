@@ -1,10 +1,11 @@
-CREATE TABLE `quantumencrypt`.`cipher` (
-  `idcipher` INT NOT NULL AUTO_INCREMENT,
-  `iduser` INT NOT NULL,
-  `serialnumber` VARCHAR(75) NOT NULL,
-  `startpoint` INT NULL,
-  `cipherstring` MEDIUMTEXT NULL,
+CREATE TABLE `cipher` (
+  `idcipher` int NOT NULL AUTO_INCREMENT,
+  `iduser` int NOT NULL,
+  `serialnumber` varchar(75) NOT NULL,
+  `startpoint` int NOT NULL,
+  `cipherstring` mediumtext NOT NULL,
+  `createdatetime` datetime NOT NULL,
+  `maxencryptionlength` int DEFAULT NULL,
   PRIMARY KEY (`idcipher`),
-  UNIQUE INDEX `iduser_UNIQUE` (`iduser` ASC) VISIBLE,
-  UNIQUE INDEX `serialnumber_UNIQUE` (`serialnumber` ASC) VISIBLE,
-  UNIQUE INDEX `idcipher_UNIQUE` (`idcipher` ASC) VISIBLE);
+  UNIQUE KEY `idcipher_UNIQUE` (`idcipher`)
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

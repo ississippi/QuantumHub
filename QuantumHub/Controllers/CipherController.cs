@@ -47,6 +47,34 @@ namespace QuantumHub.Controllers
             return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = newCipher });
         }
 
+        /// <summary>
+        /// POST api/<CipherController>/CipherSerialRequest
+        /// Get a list of globally unique serial numbers.
+        /// </summary>
+        /// <detail>
+        /// NOTE: While still in demo mode, no serial numbers are persisted to the DB, thought the Repository functions, tables and stored procedures have been built.
+        /// A list of serial numbers will be created and saved to the database and associated with the requesting user.
+        /// The serial numbers will be marked inactivated until they have been saved to a cipher segment file after being used to encrypt.
+        /// When the user requests another set of ciphers, the former set of inactive serial numbers are discarded and replaced with the newly generated serial numbers.
+        /// </detail>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("CipherSerialRequest")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<CipherSerials>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetNewCipherSerialsForUser([FromBody] CipherSerialRequest request)
+        {
+            // 1. Generate a list of ciphers per user requested quantity.
+            var serials = new CipherSerials();
+            for (var i = 0; i < request.Quantity; i++)
+            {
+                serials.SerialNumbers.Add(GenerateRandomSerialNumber());
+            }
+
+            return Ok(new BaseResponse<CipherSerials> { status = "success", reason = "", Data = serials });
+        }
+
         // POST api/<CipherController>/GetCipherList
         [HttpPost]
         [Route("GetCipherList")]

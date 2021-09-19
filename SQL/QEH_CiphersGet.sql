@@ -1,16 +1,6 @@
--------------------------------------------------------------------------------
--- QEH_CiphersGet
--- Author: Gary Smith
--- Created: 2021-06-27
--- Description: Retrieve one or more cipher rows.
--- Revision History
--------------------------------------------------------------------------------
-USE `quantumencrypt`;
-DROP procedure IF EXISTS `QEH_CiphersGet`;
-
 DELIMITER $$
-USE `quantumencrypt`$$
-CREATE PROCEDURE `QEH_CiphersGet` ()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `QEH_CiphersGet`(
+	IN userId int)
 BEGIN
 	SELECT	c.idcipher
 			,c.iduser
@@ -18,12 +8,9 @@ BEGIN
 			,c.serialnumber
 			,c.startpoint
 			,c.cipherstring
+            ,maxencryptionlength
 	FROM cipher c
-	ORDER BY c.createdate DESC;
+    WHERE c.iduser = userId
+	ORDER BY c.createdatetime DESC;
 END$$
-
 DELIMITER ;
-
-
-GO
-
