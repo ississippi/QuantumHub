@@ -19,39 +19,33 @@ namespace QuantumHub.Repository
         public static Cipher GetCipher(int userId = 0, int cipherId = 0)
         {
             Cipher cipher = null;
-            try
+            using (var dbConn = new MySqlConnection(_connectionString))
             {
-                using (var dbConn = new MySqlConnection(_connectionString))
+                dbConn.Open();
+                using (MySqlCommand dbCmd = dbConn.CreateCommand())
                 {
-                    dbConn.Open();
-                    using (MySqlCommand dbCmd = dbConn.CreateCommand())
-                    {
-                        dbCmd.CommandText = "QEH_cipherget";
-                        dbCmd.CommandType = CommandType.StoredProcedure;
-                        dbCmd.Parameters.AddWithValue("userId", userId);
-                        dbCmd.Parameters.AddWithValue("cipherId", cipherId);
+                    dbCmd.CommandText = "QEH_cipherget";
+                    dbCmd.CommandType = CommandType.StoredProcedure;
+                    dbCmd.Parameters.AddWithValue("userId", userId);
+                    dbCmd.Parameters.AddWithValue("cipherId", cipherId);
 
-                        using (var rdr = dbCmd.ExecuteReader())
+                    using (var rdr = dbCmd.ExecuteReader())
+                    {
+                        if (rdr.Read())
                         {
-                            if (rdr.Read())
-                            {
-                                cipher = new Cipher();
-                                cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
-                                cipher.UserId = DataUtil.NullToZero(rdr["iduser"]);
-                                cipher.SerialNumber = DataUtil.NullToEmpty(rdr["serialnumber"]);
-                                cipher.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
-                                cipher.CipherString = DataUtil.NullToEmpty(rdr["cipherstring"]);
-                                cipher.CreatedDateTime = DataUtil.NullToDateTimeMinValue(rdr["createdatetime"]);
-                                cipher.MaxEncryptionLength = DataUtil.NullToZero(rdr["maxencryptionlength"]);
-                            }
+                            cipher = new Cipher();
+                            cipher.CipherId = DataUtil.NullToZero(rdr["idcipher"]);
+                            cipher.UserId = DataUtil.NullToZero(rdr["iduser"]);
+                            cipher.SerialNumber = DataUtil.NullToEmpty(rdr["serialnumber"]);
+                            cipher.StartingPoint = DataUtil.NullToZero(rdr["startpoint"]);
+                            cipher.CipherString = DataUtil.NullToEmpty(rdr["cipherstring"]);
+                            cipher.CreatedDateTime = DataUtil.NullToDateTimeMinValue(rdr["createdatetime"]);
+                            cipher.MaxEncryptionLength = DataUtil.NullToZero(rdr["maxencryptionlength"]);
                         }
                     }
-                    if (dbConn.State == ConnectionState.Open)
-                        dbConn.Close();
                 }
-            }
-            catch (Exception e)
-            {
+                if (dbConn.State == ConnectionState.Open)
+                    dbConn.Close();
             }
             return cipher;
         }
@@ -94,30 +88,24 @@ namespace QuantumHub.Repository
         public static int SaveCipher(Cipher cipher)
         {
             var newCipherId = 0;
-            try
+            using (var dbConn = new MySqlConnection(_connectionString))
             {
-                using (var dbConn = new MySqlConnection(_connectionString))
+                int cipherId = 0;
+                dbConn.Open();
+                using (MySqlCommand dbCmd = dbConn.CreateCommand())
                 {
-                    int cipherId = 0;
-                    dbConn.Open();
-                    using (MySqlCommand dbCmd = dbConn.CreateCommand())
-                    {
-                        dbCmd.CommandText = "QEH_ciphersave";
-                        dbCmd.CommandType = CommandType.StoredProcedure;
-                        dbCmd.Parameters.AddWithValue("UserId", cipher.UserId);
-                        dbCmd.Parameters.AddWithValue("SerialNumber", cipher.SerialNumber);
-                        dbCmd.Parameters.AddWithValue("StartPoint", cipher.StartingPoint);
-                        dbCmd.Parameters.AddWithValue("CipherString", cipher.CipherString);
-                        dbCmd.Parameters.AddWithValue("MaxEncryptionLength", cipher.MaxEncryptionLength);
-                        var newCipherIdObj = dbCmd.ExecuteScalar();
-                        newCipherId = Convert.ToInt32(newCipherIdObj);
-                    }
-                    if (dbConn.State == ConnectionState.Open)
-                        dbConn.Close();
+                    dbCmd.CommandText = "QEH_ciphersave";
+                    dbCmd.CommandType = CommandType.StoredProcedure;
+                    dbCmd.Parameters.AddWithValue("UserId", cipher.UserId);
+                    dbCmd.Parameters.AddWithValue("SerialNumber", cipher.SerialNumber);
+                    dbCmd.Parameters.AddWithValue("StartPoint", cipher.StartingPoint);
+                    dbCmd.Parameters.AddWithValue("CipherString", cipher.CipherString);
+                    dbCmd.Parameters.AddWithValue("MaxEncryptionLength", cipher.MaxEncryptionLength);
+                    var newCipherIdObj = dbCmd.ExecuteScalar();
+                    newCipherId = Convert.ToInt32(newCipherIdObj);
                 }
-            }
-            catch (Exception e)
-            {
+                if (dbConn.State == ConnectionState.Open)
+                    dbConn.Close();
             }
             return newCipherId;
 
@@ -127,32 +115,24 @@ namespace QuantumHub.Repository
         {
             var newCipherSendId = 0;
             var maxEncryptLength = 0;
-            try
+            using (var dbConn = new MySqlConnection(_connectionString))
             {
-                using (var dbConn = new MySqlConnection(_connectionString))
+                dbConn.Open();
+                using (MySqlCommand dbCmd = dbConn.CreateCommand())
                 {
-                    dbConn.Open();
-                    using (MySqlCommand dbCmd = dbConn.CreateCommand())
-                    {
-                        dbCmd.CommandText = "QEH_ciphersend";
-                        dbCmd.CommandType = CommandType.StoredProcedure;
-                        dbCmd.Parameters.AddWithValue("UserId", s.SenderUserId);
-                        dbCmd.Parameters.AddWithValue("RecipientUserId", s.RecipientUserId);
-                        dbCmd.Parameters.AddWithValue("CipherId", s.CipherId);
-                        dbCmd.Parameters.AddWithValue("StartPoint", s.StartingPoint);
-                        var newCipherSendIdObj = dbCmd.ExecuteScalar();
-                        newCipherSendId = Convert.ToInt32(newCipherSendIdObj);
-                    }
-                    if (dbConn.State == ConnectionState.Open)
-                        dbConn.Close();
+                    dbCmd.CommandText = "QEH_ciphersend";
+                    dbCmd.CommandType = CommandType.StoredProcedure;
+                    dbCmd.Parameters.AddWithValue("UserId", s.SenderUserId);
+                    dbCmd.Parameters.AddWithValue("RecipientUserId", s.RecipientUserId);
+                    dbCmd.Parameters.AddWithValue("CipherId", s.CipherId);
+                    dbCmd.Parameters.AddWithValue("StartPoint", s.StartingPoint);
+                    var newCipherSendIdObj = dbCmd.ExecuteScalar();
+                    newCipherSendId = Convert.ToInt32(newCipherSendIdObj);
                 }
+                if (dbConn.State == ConnectionState.Open)
+                    dbConn.Close();
             }
-            catch (Exception e)
-            {
-            }
-
             return newCipherSendId;
-
         }
         public static Cipher GetCipherFromSend(int cipherSendId)
         {

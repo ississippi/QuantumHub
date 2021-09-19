@@ -50,13 +50,11 @@ namespace QuantumHub.Controllers
         /// <summary>
         /// POST api/<CipherController>/CipherSerialRequest
         /// Get a list of globally unique serial numbers.
-        /// </summary>
-        /// <detail>
         /// NOTE: While still in demo mode, no serial numbers are persisted to the DB, thought the Repository functions, tables and stored procedures have been built.
         /// A list of serial numbers will be created and saved to the database and associated with the requesting user.
         /// The serial numbers will be marked inactivated until they have been saved to a cipher segment file after being used to encrypt.
         /// When the user requests another set of ciphers, the former set of inactive serial numbers are discarded and replaced with the newly generated serial numbers.
-        /// </detail>
+        /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
