@@ -111,7 +111,7 @@ namespace QuantumHub.Controllers
             return Ok(new BaseResponse<Cipher> { status = "success", reason = "", Data = c });
         }
 
-        // POST api/<CipherController>/UploadCipher
+        // POST api/<CipherController>/SendCipher
         [HttpPost]
         [Route("SendCipher")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<int>))]
@@ -127,6 +127,24 @@ namespace QuantumHub.Controllers
             var cipherSendId = CipherRepository.SendCipher(s);
             // 3. Return to requestor
             return Ok(new BaseResponse<int> { status = "success", reason = "", Data = cipherSendId});
+        }
+
+        // POST api/<CipherController>/UploadCipher
+        [HttpPost]
+        [Route("UploadCipher")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BaseResponse<int>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UploadCipher([FromBody] CipherUpload u)
+        {
+            // 1. Validate Cipher input parameters
+            if (u == null || u.UserId < 1 || u.CipherObj == null || u.CipherObj.UserId < 1 || string.IsNullOrEmpty(u.CipherObj.CipherString) || string.IsNullOrEmpty(u.CipherObj.SerialNumber))
+            {
+                throw new Exception("Bad Request");
+            }
+            // 2. Save to DB
+            var cipherId = CipherRepository.SaveCipher(u.CipherObj);
+            // 3. Return to requestor
+            return Ok(new BaseResponse<int> { status = "success", reason = "", Data = cipherId });
         }
 
         // POST api/<CipherController>/AcceptDenyCipher
@@ -166,13 +184,12 @@ namespace QuantumHub.Controllers
 
         private Cipher GetRandomCipher(int userId, int cipherLen)
         {
-            var version = "01";
             var serialNo = GenerateRandomSerialNumber();
             var newCipher = GenerateRandomCryptographicKey(cipherLen);
             var maxEncrypt = cipherLen; // QuantumEncrypt.GetMaxFileSizeForEncryption(newCipher);
             var cipher = new Cipher
             {
-                CipherString = version + serialNo + newCipher,
+                CipherString = _cipherVersion + serialNo + newCipher,
                 MaxEncryptionLength = maxEncrypt,
                 SerialNumber = serialNo,
                 StartingPoint = 0,

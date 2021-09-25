@@ -90,7 +90,6 @@ namespace QuantumHub.Repository
             var newCipherId = 0;
             using (var dbConn = new MySqlConnection(_connectionString))
             {
-                int cipherId = 0;
                 dbConn.Open();
                 using (MySqlCommand dbCmd = dbConn.CreateCommand())
                 {
@@ -114,7 +113,6 @@ namespace QuantumHub.Repository
         public static int SendCipher(CipherSend s)
         {
             var newCipherSendId = 0;
-            var maxEncryptLength = 0;
             using (var dbConn = new MySqlConnection(_connectionString))
             {
                 dbConn.Open();

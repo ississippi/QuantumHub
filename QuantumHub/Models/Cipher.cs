@@ -80,4 +80,10 @@ namespace QuantumHub.Models
         }
         public List<string> SerialNumbers { get; set; }
     }
+
+    public class CipherUpload
+    {
+        public int UserId { get; set; }
+        public Cipher CipherObj { get; set; }
+    }
 }
